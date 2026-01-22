@@ -40,10 +40,21 @@ public class PizzaController : ControllerBase
     }
 
     // PUT action
-    [HttpPut("{id}")]
+    [HttpPut("{id}")] //Don't forget, this id comes from the URL. 
+                     // ASP.NET Then places this id into the int id parameter.
     public IActionResult Update(int id, Pizza pizza)
     {
-        // This code will update the pizza and return a result.
+        //Ensure that the pizza id matches our URL.
+        if(id != pizza.Id) return BadRequest(); // (400 code)
+
+        //If the pizza we are looking for is null, return not found status code.
+        Pizza? existingPizza = PizzaService.Get(id);
+        if(existingPizza is null) return NotFound(); // (404 code)
+
+        //Other wise update the pizza, then return NoContent. (204 code)
+        PizzaService.Update(pizza);
+
+        return NoContent();
     }
 
     // DELETE action
